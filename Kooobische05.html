@@ -16,6 +16,8 @@
             --history-bg: #444;
             --btn-reset: #d32f2f;
             --btn-reset-hover: #b71c1c;
+            --btn-sound: #ff9800;
+            --btn-sound-hover: #f57c00;
         }
 
         body {
@@ -41,20 +43,20 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
-            margin-bottom: 10px; /* Уменьшенный отступ */
+            margin-bottom: 10px;
         }
 
         .dice {
-            width: 130px; /* Увеличен на 30% (было 100px) */
-            height: 130px; /* Увеличен на 30% (было 100px) */
+            width: 130px;
+            height: 130px;
             background-color: var(--dice-color);
             color: var(--dice-text-color);
             border: 2px solid var(--dice-border);
-            border-radius: 20px; /* Увеличен для пропорций */
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 52px; /* Увеличен пропорционально */
+            font-size: 52px;
             font-weight: bold;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             position: relative;
@@ -148,7 +150,7 @@
         }
 
         .history-title {
-            margin-top: 10px; /* Уменьшен с 30px до 10px (на 20px) */
+            margin-top: 10px;
             margin-bottom: 10px;
             text-align: center;
             font-size: 18px;
@@ -185,6 +187,13 @@
             transform: scale(1.1);
         }
 
+        .buttons-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
         .btn-reset {
             padding: 10px 20px;
             font-size: 16px;
@@ -194,11 +203,25 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin-top: 10px;
         }
 
         .btn-reset:hover {
             background-color: var(--btn-reset-hover);
+        }
+
+        .btn-sound {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: var(--btn-sound);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-sound:hover {
+            background-color: var(--btn-sound-hover);
         }
     </style>
 </head>
@@ -250,8 +273,14 @@
             <div class="history-row" id="historyRow2"></div>
         </div>
 
-        <button class="btn-reset" id="resetBtn">Сбросить историю</button>
+        <div class="buttons-row">
+            <button class="btn-reset" id="resetBtn">Сбросить историю</button>
+            <button class="btn-sound" id="soundBtn">🔊 Звук вкл</button>
+        </div>
     </div>
+
+    <!-- Скрытый аудиоэлемент для воспроизведения звука -->
+    <audio id="diceSound" src="https://xssplater.github.io/odin-kubik.mp3" preload="auto"></audio>
 
     <script>
         // Элементы DOM
@@ -264,6 +293,8 @@
         const diceColorInput = document.getElementById('diceColor');
         const textColorInput = document.getElementById('textColor');
         const resetBtn = document.getElementById('resetBtn');
+        const soundBtn = document.getElementById('soundBtn');
+        const diceSound = document.getElementById('diceSound');
 
         // Переменные состояния
         let min = 1;
@@ -271,6 +302,31 @@
         let isRolling = false;
         let historyItems = [];
         let lastShakeTime = 0;
+        let soundEnabled = true;
+
+        // Инициализация настроек
+        function initSettings() {
+            const savedSound = localStorage.getItem('diceSoundEnabled');
+            if (savedSound !== null) {
+                soundEnabled = savedSound === 'true';
+                updateSoundButton();
+            }
+        }
+
+        // Обновление кнопки звука
+        function updateSoundButton() {
+            soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+            soundBtn.style.backgroundColor = soundEnabled ? 'var(--btn-sound)' : '#777';
+            localStorage.setItem('diceSoundEnabled', soundEnabled.toString());
+        }
+
+        // Воспроизведение звука
+        function playSound() {
+            if (!soundEnabled) return;
+            
+            diceSound.currentTime = 0;
+            diceSound.play().catch(e => console.log("Автовоспроизведение звука заблокировано:", e));
+        }
 
         // Обновление цвета кубика
         function updateDiceColor() {
@@ -297,6 +353,7 @@
             
             isRolling = true;
             dice.classList.add('rolling');
+            playSound();
             
             setTimeout(() => {
                 const result = getRandomInt(min, max);
@@ -384,6 +441,12 @@
             localStorage.removeItem('diceHistory');
         }
 
+        // Переключение звука
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            updateSoundButton();
+        }
+
         // Обработчик встряхивания
         function handleShake(event) {
             const currentTime = new Date().getTime();
@@ -435,6 +498,7 @@
         });
 
         resetBtn.addEventListener('click', resetHistory);
+        soundBtn.addEventListener('click', toggleSound);
 
         // Инициализация датчика встряхивания (для мобильных устройств)
         if (window.DeviceMotionEvent) {
@@ -442,6 +506,7 @@
         }
 
         // Инициализация
+        initSettings();
         loadSettings();
         loadHistory();
         updateDiceColor();
