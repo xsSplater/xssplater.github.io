@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Виртуальный кубик</title>
+    <style>
+        :root {
+            --bg-color: #222;
+            --text-color: #f5f5f5;
+            --dice-color: #333;
+            --dice-text-color: #ffffff;
+            --dice-border: #666;
+            --btn-secondary: #1565C0;
+            --btn-secondary-hover: #0D47A1;
+            --history-bg: #444;
+            --btn-reset: #d32f2f;
+            --btn-reset-hover: #b71c1c;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .dice-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px; /* Уменьшенный отступ */
+        }
+
+        .dice {
+            width: 130px; /* Увеличен на 30% (было 100px) */
+            height: 130px; /* Увеличен на 30% (было 100px) */
+            background-color: var(--dice-color);
+            color: var(--dice-text-color);
+            border: 2px solid var(--dice-border);
+            border-radius: 20px; /* Увеличен для пропорций */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px; /* Увеличен пропорционально */
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transition: transform 0.3s;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .dice.rolling {
+            animation: rotate-clockwise 0.8s linear;
+            transform: scale(1.1);
+        }
+
+        @keyframes rotate-clockwise {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.15); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .color-controls {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .color-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .color-control label {
+            margin-bottom: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .color-control input[type="color"] {
+            width: 50px;
+            height: 30px;
+            border: 2px solid var(--btn-secondary);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dice-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .dice-option {
+            padding: 8px 15px;
+            background-color: var(--btn-secondary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dice-option:hover {
+            background-color: var(--btn-secondary-hover);
+        }
+
+        .dice-option.active {
+            background-color: var(--btn-secondary-hover);
+            font-weight: bold;
+        }
+
+        .custom-range {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-range input {
+            width: 60px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background-color: #333;
+            color: white;
+            text-align: center;
+        }
+
+        .history-title {
+            margin-top: 10px; /* Уменьшен с 30px до 10px (на 20px) */
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .history-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .history-item {
+            width: 40px;
+            height: 40px;
+            background: var(--history-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+
+        .history-item:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-reset {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: var(--btn-reset);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-reset:hover {
+            background-color: var(--btn-reset-hover);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dice-container">
+            <div class="dice" id="dice">?</div>
+
+            <div class="color-controls">
+                <div class="color-control">
+                    <label for="diceColor">Цвет кубика</label>
+                    <input type="color" id="diceColor" value="#333333" oninput="updateDiceColor()">
+                </div>
+                <div class="color-control">
+                    <label for="textColor">Цвет цифр</label>
+                    <input type="color" id="textColor" value="#ffffff" oninput="updateTextColor()" list="textColors">
+                    <datalist id="textColors">
+                        <option value="#ffffff">Белый</option>
+                        <option value="#000000">Чёрный</option>
+                        <option value="#ff0000">Красный</option>
+                        <option value="#00ff00">Зелёный</option>
+                        <option value="#0000ff">Синий</option>
+                        <option value="#ffff00">Жёлтый</option>
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="custom-range">
+                <span>Свой диапазон:</span>
+                <input type="number" id="customMin" min="1" value="1">
+                <span>-</span>
+                <input type="number" id="customMax" min="2" value="6">
+            </div>
+
+            <div class="dice-options">
+                <button class="dice-option" data-min="1" data-max="4">1-4</button>
+                <button class="dice-option active" data-min="1" data-max="6">1-6</button>
+                <button class="dice-option" data-min="1" data-max="8">1-8</button>
+                <button class="dice-option" data-min="1" data-max="10">1-10</button>
+                <button class="dice-option" data-min="1" data-max="12">1-12</button>
+                <button class="dice-option" data-min="1" data-max="20">1-20</button>
+                <button class="dice-option" data-min="1" data-max="100">1-100</button>
+            </div>
+        </div>
+
+        <div class="history-title">История бросков:</div>
+        <div class="history-container" id="historyContainer">
+            <div class="history-row" id="historyRow1"></div>
+            <div class="history-row" id="historyRow2"></div>
+        </div>
+
+        <button class="btn-reset" id="resetBtn">Сбросить историю</button>
+    </div>
+
+    <script>
+        // Элементы DOM
+        const dice = document.getElementById('dice');
+        const diceOptions = document.querySelectorAll('.dice-option');
+        const customMin = document.getElementById('customMin');
+        const customMax = document.getElementById('customMax');
+        const historyRow1 = document.getElementById('historyRow1');
+        const historyRow2 = document.getElementById('historyRow2');
+        const diceColorInput = document.getElementById('diceColor');
+        const textColorInput = document.getElementById('textColor');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Переменные состояния
+        let min = 1;
+        let max = 6;
+        let isRolling = false;
+        let historyItems = [];
+        let lastShakeTime = 0;
+
+        // Обновление цвета кубика
+        function updateDiceColor() {
+            dice.style.backgroundColor = diceColorInput.value;
+            saveSettings();
+        }
+
+        // Обновление цвета текста
+        function updateTextColor() {
+            dice.style.color = textColorInput.value;
+            saveSettings();
+        }
+
+        // Улучшенный ГПСЧ
+        function getRandomInt(min, max) {
+            const randomBuffer = new Uint32Array(1);
+            window.crypto.getRandomValues(randomBuffer);
+            return min + (randomBuffer[0] % (max - min + 1));
+        }
+
+        // Бросок кубика
+        function rollDice() {
+            if (isRolling) return;
+            
+            isRolling = true;
+            dice.classList.add('rolling');
+            
+            setTimeout(() => {
+                const result = getRandomInt(min, max);
+                dice.textContent = result;
+                dice.classList.remove('rolling');
+                addToHistory(result);
+                isRolling = false;
+            }, 800);
+        }
+
+        // Добавление в историю
+        function addToHistory(result) {
+            historyItems.unshift(result);
+            if (historyItems.length > 10) {
+                historyItems = historyItems.slice(0, 10);
+            }
+            
+            updateHistoryDisplay();
+            saveHistory();
+        }
+
+        // Обновление отображения истории
+        function updateHistoryDisplay() {
+            historyRow1.innerHTML = '';
+            historyRow2.innerHTML = '';
+            
+            for (let i = 0; i < Math.min(5, historyItems.length); i++) {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.textContent = historyItems[i];
+                historyRow1.appendChild(item);
+            }
+            
+            for (let i = 5; i < historyItems.length; i++) {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.textContent = historyItems[i];
+                historyRow2.appendChild(item);
+            }
+        }
+
+        // Сохранение истории
+        function saveHistory() {
+            localStorage.setItem('diceHistory', JSON.stringify(historyItems));
+        }
+
+        // Загрузка истории
+        function loadHistory() {
+            const savedHistory = localStorage.getItem('diceHistory');
+            if (savedHistory) {
+                historyItems = JSON.parse(savedHistory);
+                updateHistoryDisplay();
+            }
+        }
+
+        // Сохранение настроек
+        function saveSettings() {
+            const settings = {
+                diceColor: diceColorInput.value,
+                textColor: textColorInput.value,
+                min: parseInt(customMin.value),
+                max: parseInt(customMax.value)
+            };
+            localStorage.setItem('diceSettings', JSON.stringify(settings));
+        }
+
+        // Загрузка настроек
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('diceSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                diceColorInput.value = settings.diceColor || '#333333';
+                textColorInput.value = settings.textColor || '#ffffff';
+                customMin.value = settings.min || 1;
+                customMax.value = settings.max || 6;
+                updateDiceColor();
+                updateTextColor();
+            }
+        }
+
+        // Сброс истории
+        function resetHistory() {
+            historyItems = [];
+            updateHistoryDisplay();
+            localStorage.removeItem('diceHistory');
+        }
+
+        // Обработчик встряхивания
+        function handleShake(event) {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastShakeTime < 1000) return;
+            
+            const acceleration = event.accelerationIncludingGravity;
+            const shakeThreshold = 15;
+            
+            if (Math.abs(acceleration.x) > shakeThreshold || 
+                Math.abs(acceleration.y) > shakeThreshold || 
+                Math.abs(acceleration.z) > shakeThreshold) {
+                lastShakeTime = currentTime;
+                rollDice();
+            }
+        }
+
+        // Обработчики событий
+        dice.addEventListener('click', rollDice);
+
+        diceOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                diceOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                min = parseInt(option.dataset.min);
+                max = parseInt(option.dataset.max);
+                
+                customMin.value = min;
+                customMax.value = max;
+                
+                dice.textContent = '?';
+                dice.classList.remove('rolling');
+                saveSettings();
+            });
+        });
+
+        customMin.addEventListener('change', () => {
+            min = parseInt(customMin.value) || 1;
+            if (min < 1) min = 1;
+            customMin.value = min;
+            saveSettings();
+        });
+
+        customMax.addEventListener('change', () => {
+            max = parseInt(customMax.value) || 6;
+            if (max <= min) max = min + 1;
+            customMax.value = max;
+            saveSettings();
+        });
+
+        resetBtn.addEventListener('click', resetHistory);
+
+        // Инициализация датчика встряхивания (для мобильных устройств)
+        if (window.DeviceMotionEvent) {
+            window.addEventListener('devicemotion', handleShake);
+        }
+
+        // Инициализация
+        loadSettings();
+        loadHistory();
+        updateDiceColor();
+        updateTextColor();
+    </script>
+</body>
+</html>
