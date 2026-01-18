@@ -2,7 +2,7 @@
 :root {
 	--bg-dark: #0a0a0a;
 	--accent: #c0ff1a;
-	--accent-glow: rgba(192, 255, 26, 0.9);
+	--accent-glow: rgba(192, 255, 26, 1.0);
 	--purple: #8a2be2;
 	--purple-glow: rgba(138, 43, 226, 0.9);
 	--blue: #00ccff;
