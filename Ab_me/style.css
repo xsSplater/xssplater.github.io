@@ -2,7 +2,7 @@
 :root {
 	--bg-dark: #0a0a0a;
 	--accent: #c0ff1a;
-	--accent-glow: rgba(192, 255, 26, 1.0);
+	--accent-glow: #c0ff1a;
 	--purple: #8a2be2;
 	--purple-glow: rgba(138, 43, 226, 0.9);
 	--blue: #00ccff;
@@ -17,10 +17,8 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-family: Tahoma, Geneva, Verdana, sans-serif;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
 html {
 	scroll-behavior: smooth; /* auto */
@@ -32,9 +30,7 @@ body {
 	color: var(--text);
 	line-height: 1.6;
 	overflow-x: hidden;
-	background-image: 
-		/* radial-gradient(circle at 10% 20%, rgba(192, 255, 26, 0.20) 0%, transparent 80%), */
-		/* radial-gradient(circle at 90% 80%, rgba(138, 43, 226, 0.30) 0%, transparent 80%); */
+	background-image:
 		linear-gradient(0.35turn, rgba(192, 255, 26, 0.1), rgba(138, 43, 226, 0.05));
 	min-height: 100vh;
 	position: relative;
@@ -72,6 +68,7 @@ header {
 	position: relative;
 	display: flex;
 	align-items: center;
+	pointer-events: none;
 }
 
 .avatar-glow {
@@ -84,10 +81,12 @@ header {
 	opacity: 0;
 	transition: var(--transition);
 	animation: pulse 2s ease-in-out infinite;
+	pointer-events: none;
+	z-index: 1;
 }
 
 .avatar-container:hover .avatar-glow {
-	opacity: 0.6;
+	opacity: 0.9;
 }
 
 @keyframes pulse {
@@ -96,14 +95,15 @@ header {
 }
 
 .avatar {
-	width: 48px;
-	height: 48px;
+	width: 78px;
+	height: 78px;
 	border-radius: 50%;
 	border: 2px solid var(--accent);
 	box-shadow: 0 0 10px var(--accent-glow);
 	transition: var(--transition);
 	position: relative;
-	z-index: 1;
+	z-index: 2;
+	pointer-events: auto;
 }
 
 .avatar:hover {
@@ -117,7 +117,7 @@ header {
 	color: var(--accent);
 	text-shadow: 0 0 10px var(--accent-glow);
 	letter-spacing: 2px;
-	font-family: 'Orbitron', sans-serif;
+	font-family: Tahoma, Geneva, Verdana, sans-serif;
 	position: relative;
 }
 
@@ -158,7 +158,6 @@ header {
 	width: 100%;
 	background: linear-gradient(90deg, transparent, var(--accent), var(--purple), transparent);
 	margin: 0 auto;
-	/* box-shadow: 0 0 5px var(--accent-glow); */
 	position: relative;
 	overflow: hidden;
 }
@@ -182,7 +181,7 @@ header {
 /* Навигационное меню */
 nav {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(7, 1fr);
 	gap: 5px;
 	justify-content: center;
 }
@@ -210,7 +209,7 @@ nav {
 	letter-spacing: 1px;
 	font-weight: bold;
 	box-shadow: 0 0 10px rgba(192, 255, 26, 0.3);
-	font-family: 'Orbitron', sans-serif;
+	font-family: Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .nav-btn::before {
@@ -280,7 +279,8 @@ section::after {
 	width: 100%;
 	height: 100%;
 	background: linear-gradient(90deg, transparent, rgba(192, 255, 26, 0.1), transparent);
-	/* transition: left 0.15s ease; */
+	transition: left 0.15s ease;
+	pointer-events: none;
 }
 
 section:hover::after {
@@ -376,16 +376,15 @@ details[open] summary {
 	box-shadow: 0 0 20px var(--accent-glow);
 }
 
-h2x {
+.h2x {
 	color: var(--accent);
 	margin-top: -15px;
-	/* margin-bottom: 10px; */
 	font-size: 20px;
 	text-transform: uppercase;
 	text-shadow: 0 0 10px var(--accent-glow);
 	position: relative;
 	display: inline-block;
-	font-family: 'Orbitron', sans-serif;
+	font-family: Tahoma, Geneva, Verdana, sans-serif;
 	font-weight: 700;
 	padding-right: 10px;
 }
@@ -393,13 +392,12 @@ h2x {
 h2 {
 	color: var(--accent);
 	margin-top: -10px;
-	/* margin-bottom: 10px; */
 	font-size: 20px;
 	text-transform: uppercase;
 	text-shadow: 0 0 10px var(--accent-glow);
 	position: relative;
 	display: inline-block;
-	font-family: 'Orbitron', sans-serif;
+	font-family: Tahoma, Geneva, Verdana, sans-serif;
 	font-weight: 700;
 	padding-right: 10px;
 }
@@ -408,12 +406,10 @@ h3 {
 	color: var(--text);
 	font-size: 18px;
 	font-weight: bold;
-	/* text-transform: uppercase; */
-	/* text-shadow: 0 0 10px var(--accent-glow); */
 	text-shadow: 0 0 10px var(--blue-glow);
 	position: relative;
 	display: inline-block;
-	font-family: 'Orbitron', sans-serif;
+	font-family: Tahoma, Geneva, Verdana, sans-serif;
 	padding-right: 10px;
 }
 
@@ -422,12 +418,8 @@ h4 {
 	padding: 10px;
 	font-size: 16px;
 	font-weight: bold;
-	/* text-transform: uppercase; */
-	/* text-shadow: 0 0 10px var(--accent-glow); */
-	/* text-shadow: 0 0 10px var(--blue-glow); */
 	position: relative;
-	/* display: inline-block; */
-	font-family: 'Orbitron', sans-serif;
+	font-family: Tahoma, Geneva, Verdana, sans-serif;
 }
 
 p {
@@ -470,14 +462,13 @@ p {
 	gap: 5px;
 	flex-wrap: wrap;
 	margin-top: -5px;
-	/* margin: 5px 0; */
 }
 
 .image-gallery img {
 	flex: 1;
 	min-width: 200px;
-	transition: all 0.1s ease-in 0s; /* Добавляем задержку 2 секунды */
-	position: relative; /* Добавляем для управления z-index */
+	transition: all 0.1s ease-in 0s;
+	position: relative;
 	z-index: 1;
 }
 
@@ -487,10 +478,9 @@ p {
 	transform-origin: left center;
 	box-shadow: 0 0 20px var(--accent-glow);
 	border-color: var(--accent);
-	position: relative; /* Добавляем для управления z-index */
-	z-index: 10; /* Выводим на передний план при наведении */
-	transition: all 0.2s ease-out 3s; /* Убираем задержку при наведении */
-	/* transform-origin: center; */
+	position: relative;
+	z-index: 10;
+	transition: all 0.2s ease-out 3s;
 }
 
 .image-gallery img.img-right:hover {
@@ -499,59 +489,36 @@ p {
 	transform-origin: right center;
 	box-shadow: 0 0 20px var(--accent-glow);
 	border-color: var(--accent);
-	position: relative; /* Добавляем для управления z-index */
-	z-index: 10; /* Выводим на передний план при наведении */
-	transition: all 0.2s ease-out 3s; /* Убираем задержку при наведении */
-	/* transform-origin: center; */
+	position: relative;
+	z-index: 10;
+	transition: all 0.2s ease-out 3s;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* Стили для адаптивного видео */
 .video-wrapper {
-    margin: 20px 0;
+	margin: 20px 0;
 }
 
 .video-container {
 	margin: 0 auto;
-    position: relative;
-    width: 80%;
-    height: 0;
-    padding-bottom: 56.25%; /* Соотношение 16:9 */
-    border: 2px solid var(--accent);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 0 15px var(--accent-glow);
+	position: relative;
+	width: 80%;
+	height: 0;
+	padding-bottom: 56.25%; /* Соотношение 16:9 */
+	border: 2px solid var(--accent);
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 0 15px var(--accent-glow);
 }
 
 .video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: none;
 }
-
-
-
-
-
-
-
 
 /* Стили для футера */
 footer {
@@ -626,7 +593,7 @@ footer::before {
 	color: var(--blue);
 	text-shadow: 0 0 10px var(--blue-glow);
 	margin-bottom: 5px;
-	font-family: 'Orbitron', sans-serif;
+	font-family: Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .stat-label {
