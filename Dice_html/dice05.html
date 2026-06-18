@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Виртуальный кубик</title>
+    <title>Custom Dice</title>
     <style>
         :root {
             --bg-color: #222;
@@ -232,25 +232,25 @@
 
             <div class="color-controls">
                 <div class="color-control">
-                    <label for="diceColor">Цвет кубика</label>
+                    <label for="diceColor">Dice color</label>
                     <input type="color" id="diceColor" value="#333333" oninput="updateDiceColor()">
                 </div>
                 <div class="color-control">
-                    <label for="textColor">Цвет цифр</label>
+                    <label for="textColor">Numbers color</label>
                     <input type="color" id="textColor" value="#ffffff" oninput="updateTextColor()" list="textColors">
                     <datalist id="textColors">
-                        <option value="#ffffff">Белый</option>
-                        <option value="#000000">Чёрный</option>
-                        <option value="#ff0000">Красный</option>
-                        <option value="#00ff00">Зелёный</option>
-                        <option value="#0000ff">Синий</option>
-                        <option value="#ffff00">Жёлтый</option>
+                        <option value="#ffffff">White</option>
+                        <option value="#000000">Black</option>
+                        <option value="#ff0000">Red</option>
+                        <option value="#00ff00">Green</option>
+                        <option value="#0000ff">Blue</option>
+                        <option value="#ffff00">Yellow</option>
                     </datalist>
                 </div>
             </div>
 
             <div class="custom-range">
-                <span>Свой диапазон:</span>
+                <span>Custom Range:</span>
                 <input type="number" id="customMin" min="1" value="1">
                 <span>-</span>
                 <input type="number" id="customMax" min="2" value="6">
@@ -267,15 +267,15 @@
             </div>
         </div>
 
-        <div class="history-title">История бросков:</div>
+        <div class="history-title">Rolls History:</div>
         <div class="history-container" id="historyContainer">
             <div class="history-row" id="historyRow1"></div>
             <div class="history-row" id="historyRow2"></div>
         </div>
 
         <div class="buttons-row">
-            <button class="btn-reset" id="resetBtn">Сбросить историю</button>
-            <button class="btn-sound" id="soundBtn">🔊 Звук вкл</button>
+            <button class="btn-reset" id="resetBtn">Reset</button>
+            <button class="btn-sound" id="soundBtn">🔊 Sound</button>
         </div>
     </div>
 
